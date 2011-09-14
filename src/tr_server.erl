@@ -25,7 +25,7 @@
 
 %% for testing
 % I wish the ifdef worked, but it doesn't
-% -ifdef(EUNIT).
+% -ifdef(TEST).
 -export([
 	 do_rpc/2,
 	 split_out_mfa/1,
@@ -43,40 +43,34 @@
 
 %%------------------------------------------------------------------------------
 %% @doc Starts the server
-%%
-%% @spec start_link(Port::integer()) -> {ok, Pid}
-%%  where Pid = pid()
 %% @end
 %%------------------------------------------------------------------------------
 
+-spec start_link(Port::integer()) -> tuple(ok, pid()).
 start_link(Port) ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [Port], []).
 
-%% @spec start_link() -> {ok, Pid}
+%%------------------------------------------------------------------------------
 %% @doc Calls `start_link(Port)' with the default port
-
+%% @end
+%%------------------------------------------------------------------------------
+-spec start_link() -> tuple(ok, pid()).
 start_link() ->
     start_link(?DEFAULT_PORT).
 
 %%------------------------------------------------------------------------------
 %% @doc Fetches the number of requests made to this server
-%%
-%% @spec get_count() -> {ok, Count}
-%% where
-%%  Count = integer()
 %% @end
 %%------------------------------------------------------------------------------
-
+-spec get_count() -> tuple(ok, integer()).
 get_count() ->
     gen_server:call(?SERVER, get_count).
 
 %%------------------------------------------------------------------------------
 %% @doc Stops the server
-%%
-%% @spec stop() -> ok
 %% @end
 %%------------------------------------------------------------------------------
-
+-spec stop() -> ok.
 stop() ->
     gen_server:cast(?SERVER, stop).
 
@@ -84,12 +78,12 @@ stop() ->
 %%% genserver callbacks
 %%%==============================================================================
 
-%% @spec init(_) -> {ok, #state{}}
+-spec init(list(integer())) -> tuple(ok, #state{}).
 init([Port]) ->
     {ok, LSock} = gen_tcp:listen(Port, [{active, true}]),
     {ok, #state{port = Port, lsock = LSock}, 0}.
 
-%% @spec handle_call(_Request, _From, #state{}) -> {reply, ok, State}
+-spec handle_call(_Request, _From, #state{}) -> {reply, ok, #state{}}.
 handle_call(Request, _From, State) ->
     case Request of
 	get_count ->
@@ -98,7 +92,7 @@ handle_call(Request, _From, State) ->
 	    {reply, ok, State}
     end.
 
-%% @spec handle_cast/(_Msg, State)  -> {noreply, State}
+-spec handle_cast(_Msg, #state{})  -> tuple(noreply, #state{}).
 handle_cast(Msg, State) ->
     case Msg of
 	stop ->
@@ -107,8 +101,9 @@ handle_cast(Msg, State) ->
 	    {noreply, State}
     end.
 
-%% @spec handle_info({tcp, Socket, RawData}, State) -> {noreply, State}
 %% @doc  accepts a connection to the service TCP socket
+-spec handle_info(tuple(atom(), socket(), string()) | any(), #state{}) ->
+			 tuple(noreply, #state{}).
 handle_info({tcp, Socket, RawData}, State) ->
     do_rpc(Socket, RawData),
     RequestCount = State#state.request_count,
@@ -116,22 +111,21 @@ handle_info({tcp, Socket, RawData}, State) ->
 handle_info(timeout, #state{lsock = LSock} = State) ->
      {ok, _Sock} = gen_tcp:accept(LSock),
      {noreply, State};
-%% @spec handle_info(_Info, State) -> {noreply, State}
 handle_info(_Info, State) ->
     {noreply, State}.
 
-%% @spec terminate(_Resason, _State) -> ok
+-spec terminate(_Resason, #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 
-%% @spec code_change(_OldVsn, State, _Extra) -> {ok, State}
+-spec code_change(_OldVsn, #state{}, _Extra) -> tuple(ok, #state{}).
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %%-------------------------------------------------------------------------------
 %% Internal functions
 %%-------------------------------------------------------------------------------
-%% @spec do_rpc(Socket, RawData) -> ok
+-spec do_rpc(socket(), string()) -> ok.
 do_rpc(Socket, RawData) ->
     try
 	{M, F, A} = split_out_mfa(RawData),
@@ -142,8 +136,8 @@ do_rpc(Socket, RawData) ->
 	    gen_tcp:send(Socket, io_lib:fwrite("~p~n", [Err]))
     end.
 
-%% @spec split_out_mfa(string()) ->
-%%       {Module = string(), Function = string(), Arguments = [string()]}
+-spec split_out_mfa(string()) ->
+       tuple(string(), string(), list(string())).
 split_out_mfa(RawData) ->
     MFA = re:replace(RawData, "\r\n$", "", [{return, list}]),
     {match, [M, F, A]} =
@@ -152,9 +146,9 @@ split_out_mfa(RawData) ->
 		[{capture, [1, 2, 3], list}, ungreedy]),
     {list_to_atom(M), list_to_atom(F), args_to_terms(A)}.
 
-%% @spec args_to_terms(list()) -> list()
 %% @doc convert a representation of arguments into a list of terms to be used
 %%      with apply/1
+-spec args_to_terms(list()) -> list().
 args_to_terms(RawArgs) ->
     {ok, Toks, _Line} = erl_scan:string("[" ++ RawArgs ++ "]. ", 1),
     {ok, Args} = erl_parse:parse_term(Toks),
