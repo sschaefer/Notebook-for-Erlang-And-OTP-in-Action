@@ -1,0 +1,11 @@
+This is code transcribed, modified or created by Stephen P. Schaefer as he
+works the examples in "Erlang and OLT in Action" by Logan, Merritt, and
+Carlsson, published by Manning.  I find the exercises quite useful, and
+very much recommend the book.
+
+The authors have graciously provided the code with an MIT license, as declared
+here: http://www.manning-sandbox.com/thread.jspa?threadID=46558&tstart=0
+
+I've typed the code in rather than cloning the git repository, so as to
+learn how to understand and correct my errors.  I've also made modifications;
+don't rely on this code as you would the original author's!
