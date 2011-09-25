@@ -3,7 +3,7 @@
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
 %%% @doc Eunit tests for tr_server provided in
-%%%      the "OTP in Action" book by Logan, Merit and Carlson.
+%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
 %%%
 %%% Setup
 %%%      To test a different genserver behavior implementation, one nees to

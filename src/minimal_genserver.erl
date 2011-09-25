@@ -1,9 +1,12 @@
 %%%------------------------------------------------------------------------------
-%%% @author Stephen P. Schaefer <sschaefer@acm.org>
+%%% @author Martin & Eric <erlware-dev@googlegroups.com>
+%%% [http://www.manning.com/logan]
+%%% @author transcribed by Stephen P. Schaefer <sschaefer@acm.org>
+%%% All errors may be assumed to have been introduced by Stephen P. Schaefer
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
 %%% @doc Transcribed from the minimal genserver behavior implementation code in
-%%%      the "OTP in Action" book by Logan, Merit and Carlson.
+%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
 %%% @end
 %%%------------------------------------------------------------------------------
 -module(minimal_genserver).
