@@ -9,3 +9,6 @@ here: http://www.manning-sandbox.com/thread.jspa?threadID=46558&tstart=0
 I've typed the code in rather than cloning the git repository, so as to
 learn how to understand and correct my errors.  I've also made modifications;
 don't rely on this code as you would the original author's!
+
+For convenience and comparison, the code as provided by the original authors
+as of Sept. 24, 2011 is provided in the directory Original-Code
