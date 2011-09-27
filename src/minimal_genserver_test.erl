@@ -3,7 +3,7 @@
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
 %%% @doc Eunit tests for minimal genserver behavior implementation provided in
-%%%      the "OTP in Action" book by Logan, Merit and Carlson.
+%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
 %%% @end
 %%%------------------------------------------------------------------------------
 -module(minimal_genserver_test).

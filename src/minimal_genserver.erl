@@ -3,7 +3,7 @@
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
 %%% @doc Transcribed from the minimal genserver behavior implementation code in
-%%%      the "OTP in Action" book by Logan, Merit and Carlson.
+%%%      the "OTP in Action" book by Logan, Merrit and Carlsson.
 %%% @end
 %%%------------------------------------------------------------------------------
 -module(minimal_genserver).
