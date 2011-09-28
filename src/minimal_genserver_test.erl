@@ -19,6 +19,7 @@
 -include("minimal_genserver.hrl").
 
 -export([]).
+% The export triggers EDoc documentation.
 -ifndef(TEST).
 -export([
 	 init_test/0,
