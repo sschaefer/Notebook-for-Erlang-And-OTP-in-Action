@@ -19,6 +19,16 @@
 -include("minimal_genserver.hrl").
 
 -export([]).
+-ifndef(TEST).
+-export([
+	 init_test/0,
+	 handle_call_test/0,
+	 handle_cast_test/0,
+	 handle_info_test/0,
+	 terminate_test/0,
+	 code_change_test/0
+	]).
+-endif.
 
 %%%==============================================================================
 %%% Tests
