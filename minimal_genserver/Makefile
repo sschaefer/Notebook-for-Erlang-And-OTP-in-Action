@@ -9,7 +9,7 @@ ebin/%.beam : src/%.erl $(HEADERS) Makefile
 	erlc $(ERLC_FLAGS) -o ebin/ $<
 
 doc/%.html : src/%.erl $(HEADERS) Makefile
-	erl -noshell -eval 'edoc:application(tcp_rpc,".", [])' -s init stop
+	erl -noshell -eval 'edoc:application(minimal_genserver,".", [])' -s init stop
 
 clean:
 	-rm $(OBJECTS)
