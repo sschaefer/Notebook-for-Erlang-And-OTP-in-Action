@@ -45,6 +45,7 @@
 %% @doc Starts the server
 %% @end
 %%------------------------------------------------------------------------------
+
 -spec start_link(Port::integer()) -> tuple(ok, pid()).
 start_link(Port) ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [Port], []).
