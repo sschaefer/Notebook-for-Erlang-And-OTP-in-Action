@@ -2,7 +2,7 @@
 %%% @author Martin and Eric <erlware-dev@googlegroups.com>
 %%%  [http://www.erlware.org]
 %%% @copyright 2008-2010 Erlware
-%%% @doc RPC over TPC server.  This module defines a server process that
+%%% @doc RPC over TCP server.  This module defines a server process that
 %%%      listens for incoming TCP connections and allows the user to
 %%%      execute RPC commands via that TCP stream.
 %%%      
