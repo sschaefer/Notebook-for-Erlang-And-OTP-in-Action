@@ -2,7 +2,7 @@
 %%% @author Martin and Eric <erlware-dev@googlegroups.com>
 %%%  [http://www.erlware.org]
 %%% @copyright 2008-2010 Erlware
-%%% @doc RPC over TPC server.  This module defines a server process that
+%%% @doc RPC over TCP server.  This module defines a server process that
 %%%      listens for incoming TCP connections and allows the user to
 %%%      execute RPC commands via that TCP stream.
 %%%      
@@ -29,11 +29,11 @@
 %% for testing
 % I wish the ifdef worked, but it doesn't
 % -ifdef(TEST).
--export([
-	 do_rpc/2,
-	 split_out_mfa/1,
-	 args_to_terms/1
-	]).
+% -export([
+% 	 do_rpc/2,
+%	 split_out_mfa/1,
+%	 args_to_terms/1
+%	]).
 % -endif.
 
 -define(SERVER, ?MODULE).
@@ -167,3 +167,49 @@ args_to_terms(RawArgs) ->
     {ok, Args} = erl_parse:parse_term(Toks),
     Args.
 
+%%%==============================================================================
+%%% Tests
+%%%==============================================================================
+
+-ifdef(TEST).
+-define(TEST_PORT3, 65531).
+%% @doc test the parsing of a string into a list of terms
+%%     must work for split_out_mfa/1 to work
+-spec args_to_terms_test() -> ok.
+args_to_terms_test() ->
+    [] =
+	args_to_terms(""),
+    [test_arg0] =
+	args_to_terms("test_arg0"),
+    [test_arg0, test_arg1] =
+	args_to_terms("test_arg0, test_arg1").
+    
+%% @doc parse a string into the components needed to execute it as an
+%%     Erlang function
+%%     must work for do_rpc/2 to work
+-spec split_out_mfa_test() -> tuple(atom(), atom(), list(atom())).
+split_out_mfa_test() ->
+    {test_module, test_function, [test_arg0, test_arg1]} =
+	split_out_mfa(
+	   "test_module:test_function(test_arg0, test_arg1).\r\n").
+
+%% @doc test of do_rpc/2
+%%      do_rpc/2 must work for handle_info/2 to work
+
+-spec do_rpc_test() -> ok.
+do_rpc_test() ->
+    {ok, LSock} = gen_tcp:listen(?TEST_PORT3, [{active, false}]),
+    Pid = spawn(fun() -> do_rpc_client(?TEST_PORT3) end),
+    {ok, ServerSock} = gen_tcp:accept(LSock),
+    Pid ! self(),
+    Received = gen_tcp:recv(ServerSock, 0),
+    {ok, RawData} = Received,
+    ok = do_rpc(ServerSock, RawData),
+    receive
+	{ok, Receive} -> ok
+    end,
+    "[3,2,1]\n" = binary_to_list(Receive),
+    ok = gen_tcp:close(ServerSock),
+    ok = gen_tcp:close(LSock).
+
+-endif.
