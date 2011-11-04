@@ -45,6 +45,7 @@
 %% @doc Starts the server
 %% @end
 %%------------------------------------------------------------------------------
+
 -spec start_link(Port::integer()) -> tuple(ok, pid()).
 start_link(Port) ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [Port], []).
@@ -82,7 +83,7 @@ init([Port]) ->
     {ok, LSock} = gen_tcp:listen(Port, [{active, true}]),
     {ok, #state{port = Port, lsock = LSock}, 0}.
 
--spec handle_call(_Request, _From, #state{}) -> tuple(reply, ok, #state{}).
+-spec handle_call(_Request, _From, #state{}) -> {reply, ok, #state{}}.
 handle_call(Request, _From, State) ->
     case Request of
 	get_count ->

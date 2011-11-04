@@ -46,12 +46,12 @@ handle_call_test() ->
     {reply, ok, preserved_state} = ?MODULE_TESTED:handle_call(discarded_request, discarded_from, preserved_state).
 
 %% @doc test of handle_cast/2
--spec handle_cast_test() -> tuple(noreply, preserved_state).
+-spec handle_cast_test() -> {noreply, preserved_state}.
 handle_cast_test() ->
     {noreply, preserved_state} = ?MODULE_TESTED:handle_cast(discarded_msg, preserved_state).
 
 %% @doc test of handle_info/2
--spec handle_info_test() -> tuple(noreply, preserved_state).
+-spec handle_info_test() -> {noreply, preserved_state}.
 handle_info_test() ->
     {noreply, preserved_state} = ?MODULE_TESTED:handle_info(discarded_info, preserved_state).
 
@@ -61,6 +61,6 @@ terminate_test() ->
     ok = ?MODULE_TESTED:terminate(discarded_reason, discarded_state).
 
 %% @doc test of code_change/3
--spec code_change_test() -> tuple(ok, preserved_state).
+-spec code_change_test() -> {ok, preserved_state}.
 code_change_test() ->
     {ok, preserved_state} = ?MODULE_TESTED:code_change(old_version, preserved_state, extra).
