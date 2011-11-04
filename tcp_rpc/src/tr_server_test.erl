@@ -13,12 +13,11 @@
 %%% @end
 %%%------------------------------------------------------------------------------
 -module(tr_server_test).
--include("eunit-2.1.7/include/eunit.hrl").
 
 -define(MODULE_TESTED, tr_server).
--include("tr_server.hrl").
-
 -export([]).
+
+-include("tr_server.hrl").
 
 %%%==============================================================================
 %%% Tests
@@ -108,58 +107,6 @@ get_count_test() ->
     {ok, 0} = ?MODULE_TESTED:get_count(),
     ok = gen_tcp:close(ClientSock),
     ok = ?MODULE_TESTED:stop().
-
-%%@doc test the parsing of a string into a list of terms
-%%     must work for split_out_mfa/1 to work
--spec args_to_terms_test() -> ok.
-args_to_terms_test() ->
-    [] =
-	?MODULE_TESTED:args_to_terms(""),
-    [test_arg0] =
-	?MODULE_TESTED:args_to_terms("test_arg0"),
-    [test_arg0, test_arg1] =
-	?MODULE_TESTED:args_to_terms("test_arg0, test_arg1").
-    
-%%@doc parse a string into the components needed to execute it as an
-%%     Erlang function
-%%     must work for do_rpc/2 to work
--spec split_out_mfa_test() -> tuple(atom(), atom(), list(atom())).
-split_out_mfa_test() ->
-    {test_module, test_function, [test_arg0, test_arg1]} =
-	?MODULE_TESTED:split_out_mfa(
-	   "test_module:test_function(test_arg0, test_arg1).\r\n").
-
-%% @doc test of do_rpc/2
-%%      do_rpc/2 must work for handle_info/2 to work
--spec do_rpc_client(integer()) -> ok.
-do_rpc_client(Port) ->
-    ok = timer:sleep(500),
-    {ok, ClientSock} =
-	gen_tcp:connect(
-	  "localhost",
-	  Port,
-	  [binary, {packet, 0}, {active, false}]),
-    ok = gen_tcp:send(ClientSock, "lists:reverse([1,2,3]).\r\n"),
-    receive
-	Parent -> Parent ! gen_tcp:recv(ClientSock, 0)
-    end,
-    ok = gen_tcp:close(ClientSock).
-    
--spec do_rpc_test() -> ok.
-do_rpc_test() ->
-    {ok, LSock} = gen_tcp:listen(?TEST_PORT3, [{active, false}]),
-    Pid = spawn(fun() -> do_rpc_client(?TEST_PORT3) end),
-    {ok, ServerSock} = gen_tcp:accept(LSock),
-    Pid ! self(),
-    Received = gen_tcp:recv(ServerSock, 0),
-    {ok, RawData} = Received,
-    ok = ?MODULE_TESTED:do_rpc(ServerSock, RawData),
-    receive
-	{ok, Receive} -> ok
-    end,
-    "[3,2,1]\n" = binary_to_list(Receive),
-    ok = gen_tcp:close(ServerSock),
-    ok = gen_tcp:close(LSock).
 
 %% @doc test of handle_info/2
 -spec do_null_rpc_client(integer()) -> ok.
