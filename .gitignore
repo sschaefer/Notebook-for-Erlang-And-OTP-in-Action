@@ -1,3 +1,12 @@
-ebin/*.beam
-docs/*.html
+*~
+minimal_genserver/ebin/*.beam
+minimal_genserver/doc/*.html
+minimal_genserver/doc/stylesheet.css
+minimal_genserver/doc/edoc-info
+minimal_genserver/doc/erlang.png
+tcp_rpc/ebin/*.beam
+tcp_rpc/doc/*.html
+tcp_rpc/doc/stylesheet.css
+tcp_rpc/doc/edoc-info
+tcp_rpc/doc/erlang.png
 erl_crash.dump

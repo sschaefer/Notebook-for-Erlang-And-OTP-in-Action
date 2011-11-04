@@ -5,7 +5,10 @@
 %%% @doc RPC over TPC server.  This module defines a server process that
 %%%      listens for incoming TCP connections and allows the user to
 %%%      execute RPC commands via that TCP stream.
-%%%      - transcribed and modified for testing by Stephen P. Schaer
+%%%      
+%%%      Internal functions exported so they may be exercised by tr_server_test.
+%%%
+%%%      - transcribed and modified for testing by Stephen P. Schaefer
 %%% @end
 %%%------------------------------------------------------------------------------
 -module(tr_server).
@@ -42,15 +45,16 @@
 %%%==============================================================================
 
 %%------------------------------------------------------------------------------
-%% @doc Starts the server
+%% @doc API: Starts the server
 %% @end
 %%------------------------------------------------------------------------------
+
 -spec start_link(Port::integer()) -> tuple(ok, pid()).
 start_link(Port) ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [Port], []).
 
 %%------------------------------------------------------------------------------
-%% @doc Calls `start_link(Port)' with the default port
+%% @doc API: Calls `start_link(Port)' with the default port
 %% @end
 %%------------------------------------------------------------------------------
 -spec start_link() -> tuple(ok, pid()).
@@ -58,7 +62,7 @@ start_link() ->
     start_link(?DEFAULT_PORT).
 
 %%------------------------------------------------------------------------------
-%% @doc Fetches the number of requests made to this server
+%% @doc API: Fetches the number of requests made to this server
 %% @end
 %%------------------------------------------------------------------------------
 -spec get_count() -> tuple(ok, integer()).
@@ -66,7 +70,7 @@ get_count() ->
     gen_server:call(?SERVER, get_count).
 
 %%------------------------------------------------------------------------------
-%% @doc Stops the server
+%% @doc API: Stops the server
 %% @end
 %%------------------------------------------------------------------------------
 -spec stop() -> ok.
@@ -77,11 +81,14 @@ stop() ->
 %%% genserver callbacks
 %%%==============================================================================
 
+%% @doc genserver callback: starts listening to a TCP Port,
+%%     and returns the initial state.
 -spec init(list(integer())) -> tuple(ok, #state{}).
 init([Port]) ->
     {ok, LSock} = gen_tcp:listen(Port, [{active, true}]),
     {ok, #state{port = Port, lsock = LSock}, 0}.
 
+%% @doc genserver callback: provides a reply to get_count request, for anything else, noop
 -spec handle_call(_Request, _From, #state{}) -> tuple(reply, ok, #state{}).
 handle_call(Request, _From, State) ->
     case Request of
@@ -91,6 +98,8 @@ handle_call(Request, _From, State) ->
 	    {reply, ok, State}
     end.
 
+%% @doc genserver callback: provides {stop, normal, State} reply to stop message,
+%%     {noreply, State} to others
 -spec handle_cast(_Msg, #state{})  -> tuple(noreply, #state{}).
 handle_cast(Msg, State) ->
     case Msg of
@@ -100,7 +109,7 @@ handle_cast(Msg, State) ->
 	    {noreply, State}
     end.
 
-%% @doc  accepts a connection to the service TCP socket
+%% @doc genserver callback: accepts a connection to the service TCP socket
 -spec handle_info(tuple(atom(), socket(), string()) | any(), #state{}) ->
 			 tuple(noreply, #state{}).
 handle_info({tcp, Socket, RawData}, State) ->
@@ -113,10 +122,12 @@ handle_info(timeout, #state{lsock = LSock} = State) ->
 handle_info(_Info, State) ->
     {noreply, State}.
 
+%% @doc genserver callback: minimal implementation returns ok.
 -spec terminate(_Resason, #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 
+%% @doc genserver callback: minimal implementation returns {ok, State}
 -spec code_change(_OldVsn, #state{}, _Extra) -> tuple(ok, #state{}).
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
@@ -124,6 +135,8 @@ code_change(_OldVsn, State, _Extra) ->
 %%-------------------------------------------------------------------------------
 %% Internal functions
 %%-------------------------------------------------------------------------------
+
+%% @doc Internal: Takes a socket on which to write and a string to parse and execute.
 -spec do_rpc(socket(), string()) -> ok.
 do_rpc(Socket, RawData) ->
     try
@@ -135,6 +148,7 @@ do_rpc(Socket, RawData) ->
 	    gen_tcp:send(Socket, io_lib:fwrite("~p~n", [Err]))
     end.
 
+%% @doc Internal: parses a string into module, function and arguments
 -spec split_out_mfa(string()) ->
        tuple(string(), string(), list(string())).
 split_out_mfa(RawData) ->
@@ -145,7 +159,7 @@ split_out_mfa(RawData) ->
 		[{capture, [1, 2, 3], list}, ungreedy]),
     {list_to_atom(M), list_to_atom(F), args_to_terms(A)}.
 
-%% @doc convert a representation of arguments into a list of terms to be used
+%% @doc Internal: convert a representation of arguments into a list of terms to be used
 %%      with apply/1
 -spec args_to_terms(list()) -> list().
 args_to_terms(RawArgs) ->
