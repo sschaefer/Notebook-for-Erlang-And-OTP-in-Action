@@ -1,6 +1,6 @@
 %% -*- mode: Erlang; fill-column: 75; comment-column: 50; -*-
 
-{appcication, tccp_rpc,
+{application, tcp_rpc,
  [{description, "RPC server for Erlang and OTP in action"},
   {vsn, "0.1.0"},
   {modules, [tr_app,
