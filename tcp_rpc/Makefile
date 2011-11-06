@@ -1,5 +1,7 @@
 # An erlang Makefile
 
+APPLICATION=tcp_rpc
+
 empty:=
 space:=$(empty) $(empty)
 dnotest:=$(space)-DNOTEST
@@ -24,7 +26,7 @@ ebin/%.beam : src/%.erl $(HEADERS) Makefile
 	erlc $(ERLC_FLAGS) -o ebin/ $<
 
 doc/%.html : src/%.erl $(HEADERS) Makefile
-	erl -noshell -eval 'edoc:application(tcp_rpc,".", [])' -s init stop
+	erl -noshell -eval 'edoc:application($(APPLICATION),".", [])' -s init stop
 
 ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))
 # -DNOTEST did not occur in ERLC_FLAGS: test
@@ -45,3 +47,38 @@ release: clean
 	$(MAKE) ERLC_FLAGS="$(ERLC_FLAGS) -DNOTEST"
 
 doc: $(DOCS)
+
+run:
+	erl -noshell -pa ebin \
+		-eval 'application:start($(APPLICATION))' &
+
+webtool:
+	erl -noshell -pa ebin \
+		-eval 'webtool:start()' \
+		-eval 'application:start($(APPLICATION))' &
+
+toolbar:
+	erl -noshell -pa ebin \
+		-eval 'toolbar:start()' \
+		-eval 'application:start($(APPLICATION))' &
+
+appmon:
+	erl -noshell -pa ebin \
+		-eval 'appmon:start()' \
+		-eval 'application:start($(APPLICATION))' &
+
+pman:
+	erl -noshell -pa ebin \
+		-eval 'application:start($(APPLICATION))' \
+		-eval 'pman:start()' &
+
+debug: clean
+	$(MAKE) ERLC_FLAGS="+debug_info $(ERLC_FLAGS)"
+	erl -noshell -pa ebin \
+		-eval 'debugger:start()' \
+		-eval 'application:start($(APPLICATION))' &
+
+tv:
+	erl -noshell -pa ebin \
+		-eval 'tv:start()' \
+		-eval 'application:start($(APPLICATION))' &
