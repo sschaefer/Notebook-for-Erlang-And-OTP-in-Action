@@ -1,0 +1,20 @@
+%%% @author Stephen P. Schaefer <sps@thyrsus-laptop2>
+%%% @copyright (C) 2011, Stephen P. Schaefer
+%%% @doc
+%%% Tests for sc_app of the simple_cache application.
+%%% @end
+%%% Created :  6 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
+
+-module(sc_app_test).
+
+-include("eunit-2.1.7/include/eunit.hrl").
+
+-export([]).
+
+-spec start_test() -> {ok, pid()}.
+start_test() ->
+    {ok, _Pid} = sc_app:start(ignored, ignored).
+
+-spec stop_test() -> ok.
+stop_test() ->
+    ok = sc_app:stop(ignored).
