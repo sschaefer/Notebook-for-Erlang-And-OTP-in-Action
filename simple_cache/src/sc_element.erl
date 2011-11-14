@@ -24,43 +24,112 @@
 -define(SERVER, ?MODULE).
 -define(DEFAULT_LEASE_TIME, (60 * 60 * 24)).
 
--record(state, {value, lease_time, start_time}).
+-include("sc_element.hrl").
 
+%%%================================================================
+%%% API
+%%%================================================================
+
+%% @doc explain
+-spec start_link(term(), time_period()) -> startlink_ret().
 start_link(Value, LeaseTime) ->
-    bad.
+    gen_server:start_link(?MODULE, [Value, LeaseTime], []).
 
+%% @doc explain
+-spec create(term(), time_period()) -> startchild_ret().
 create(Value, LeaseTime) ->
-    bad.
+    sc_sup:start_child(Value, LeaseTime).
 
+%% @doc explain
+-spec create(term()) -> startchild_ret().
 create(Value) ->
-    bad.
+    create(Value, ?DEFAULT_LEASE_TIME).
 
+%% @doc explain
+-spec fetch(pid()) -> ok.
 fetch(Pid) ->
-    bad.
+    gen_server:call(Pid, fetch).
 
+%% @doc explain
+-spec replace(pid(), term()) -> ok.
 replace(Pid, Value) ->
-    bad.
+    gen_server:cast(Pid, {replace, Value}).
 
+%% @doc explain
+-spec delete(pid()) -> ok.
 delete(Pid) ->
-    bad.
+    gen_server:cast(Pid, delete).
 
+%%%================================================================
+%%% Callbacks
+%%%================================================================
+
+%% @doc explain
+-spec init([term()]) -> {ok, element_state(), time_period()}.
 init([Value, LeaseTime]) ->
-    bad.
+    Now = calendar:local_time(),
+    StartTime = calendar:datetime_to_gregorian_seconds(Now),
+    {ok,
+     #state{value = Value,
+	    start_time = StartTime,
+	    lease_time = LeaseTime},
+     time_left(StartTime, LeaseTime)}.
 
+%% @doc explain
+-spec handle_call(fetch, _, element_state()) -> {reply, {ok, term()}, time_period()}.
 handle_call(fetch, _From, State) ->
-    bad.
+    #state{value = Value,
+	   lease_time = LeaseTime,
+	   start_time = StartTime} = State,
+    TimeLeft = time_left(StartTime, LeaseTime),
+    {reply, {ok, Value}, State, TimeLeft}.
 
+%% @doc explain
+-spec handle_cast({replace, term()}|delete, element_state()) -> {noreply|stop, element_state(), time_period()|element_state()}.
 handle_cast({replace, Value}, State) ->
-    bad;
+    #state{lease_time = LeaseTime,
+	   start_time = StartTime} = State,
+    TimeLeft = time_left(StartTime, LeaseTime),
+    {noreply, State#state{value = Value}, TimeLeft};
 
 handle_cast(delete, State) ->
-    bad.
+    {stop, normal, State}.
 
+%% @doc explain
+-spec handle_info(timeout, element_state()) -> {stop, normal, element_state()}.
 handle_info(timeout, State) ->
-    bad.
+    {stop, normal, State}.
 
+%% @doc explain
+-spec terminate(_, _) -> ok.
 terminate(_Reason, _State) ->
-    bad.
+    sc_store:delete(self()),
+    ok.
 
+%% @doc explain
+-spec code_change(_, element_state(), _) -> {ok, element_state()}.
 code_change(_OldVsn, State, _Extra) ->
-    bad.
+    {ok, State}.
+
+%%%================================================================
+%%% Internal functions
+%%%================================================================
+
+-spec time_left(integer(), time_period()) -> integer().
+time_left(_StartTime, infinity) ->
+    infinity;
+time_left(StartTime, LeaseTime) ->
+    Now = calendar:local_time(),
+    CurrentTime = calendar:datetime_to_gregorian_seconds(Now),
+    TimeElapsed = CurrentTime - StartTime,
+    case LeaseTime - TimeElapsed of
+	Time when Time =< 0 -> 0;
+	Time                -> Time * 1000
+    end.
+
+time_left_test() ->
+    infinity = time_left(ignored, infinity),
+    Now = calendar:local_time(),
+    0 = time_left(0, 0),
+    0 = time_left(0, calendar:datetime_to_gregorian_seconds(Now) - 1),
+    ?assert(0 < time_left(0, calendar:datetime_to_gregorian_seconds(Now) + 1)).

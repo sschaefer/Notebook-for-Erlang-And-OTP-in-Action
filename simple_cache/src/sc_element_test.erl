@@ -7,49 +7,68 @@
 
 -module(sc_element_test).
 
--include("eunit-2.1.7/include/eunit.hrl").
+-include("sc_element.hrl").
 
 -export([]).
 
+-spec start_link_test() -> {ok, pid()}.
 start_link_test() ->
-    bad1 = sc_element:start_link(bad2, bad3).
+    %%% a side effect for ALL tests sc_store:init() call required to initialize required module sc_store 
+    ?assertEqual(ok, sc_store:init()),
+    {ok, _Pid} = sc_element:start_link(value1, 60).
 
 create2_test() ->
-    bad4 = sc_element:create(bad5, bad6).
+    sc_sup:start_link(), % elements invoke supervisor resources
+    {ok, _Pid} = sc_element:create(value2, 60).
 
 create1_test() ->
-    bad7 = sc_element:create(bad8).
+    {ok, _Pid} = sc_element:create(value3).
 
 fetch_test() ->
-    bad9 = sc_element:fetch(bad10).
+    {ok, Pid} = sc_element:create(value4),
+    {ok, value4} = sc_element:fetch(Pid).
 
 replace_test() ->
-    bad11 = sc_element:replace(bad12, bad13).
+    {ok, Pid} = sc_element:create(value1),
+    ok = sc_element:replace(Pid, value2),
+    {ok, value2} = sc_element:fetch(Pid).
 
 delete_test() ->
-    bad14 = sc_element:delete(bad15).
+    {ok, Pid} = sc_element:create(value5),
+    ok = sc_element:delete(Pid).
+% check that Pid no longer exists
 
 init_test() ->
-    ?assertMatch(bad16, sc_element:init(bad17)),
-    ?assertMatch(bad16_1, sc_element:init([bad17_1, bad17_2])).
+    Now = calendar:local_time(),
+    CurrentTime = calendar:datetime_to_gregorian_seconds(Now),
+    AfterCurrentTime = CurrentTime + 1,
+    {ok, #state{value = value1, start_time = StartTime, lease_time = 0}, 0} =
+	sc_element:init([value1, 0]),
+    ?assert(CurrentTime =< StartTime),
+    ?assert(StartTime =< AfterCurrentTime).    
 
 handle_call_test() ->
-    ?assertMatch(bad18, sc_element:handle_call(bad19, bad20, bad21)),
-    ?assertMatch(bad22, sc_element:handle_call(fetch, bad23, bad24)).
+    State = #state{value = value1, lease_time = 0, start_time = 0},
+    {reply, {ok, value1}, State, 0} =
+	sc_element:handle_call(fetch, ignored, State).
+	   
 
 handle_cast_test() ->
-    ?assertMatch(bad25, sc_element:handle_cast(bad26, bad27)),
-    ?assertMatch(bad28, sc_element:handle_cast({replace, bad29}, bad30)),
-    ?assertMatch(bad31, sc_element:handle_cast(delete, bad32)).
+    ?assertMatch({noreply,
+		  #state{value = value2, lease_time = 0, start_time = 0}, 0},
+		 sc_element:handle_cast({replace, value2},
+					#state{value = value1, lease_time = 0, start_time = 0})),
+    ?assertMatch({stop, normal, state}, sc_element:handle_cast(delete, state)).
 
 handle_info_test() ->
-    ?assertMatch(bad33, sc_element:handle_info(bad34, bad35)),
-    ?assertMatch(bad36, sc_element:handle_info(timeout, bad37)).
+    ?assertMatch({stop, normal, state}, sc_element:handle_info(timeout, state)).
 
 terminate_test() ->
-    bad38 = sc_element:terminate(bad39, bad40).
+    ?assertEqual(true, sc_store:insert(terminate_test, self())),
+    ?assertEqual(ok, sc_element:terminate(ignored1, ignored2)).
 
 code_change_test() ->
-    bad41 = sc_element:code_change(bad42, bad43, bad44).
+    {ok, state} = sc_element:code_change(ignored1, state, ignored2).
 
-    
+cleanup_test() ->
+    ets:delete(sc_store).

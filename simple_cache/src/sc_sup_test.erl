@@ -10,16 +10,9 @@
 -module(sc_sup_test).
 
 -include("eunit-2.1.7/include/eunit.hrl").
+-include("sc_sup.hrl").
 
 -export([]).
-
--type child() :: pid() | undefined.
--type startchild_ret() :: {ok, Child :: child()}
-                 | {ok, Child :: child(), Info :: term()}
-                 | {error, startchild_err()}.
--type startchild_err() :: already_present
-                 | {already_started, Child :: child()}
-                 | term().
 
 -spec start_link_test() -> {ok, pid()}.
 start_link_test() ->
@@ -27,18 +20,7 @@ start_link_test() ->
 
 -spec start_child_test() -> startchild_ret().
 start_child_test() ->
-    {ok, _Pid} = sc_sup:start_child(value, lease_time).
-
--type strategy() :: one_for_all
-           | one_for_one
-           | rest_for_one
-           | simple_one_for_one.
-
--type restart() :: permanent | transient | temporary.
-
--type shutdown() :: brutal_kill | timeout().
-
--type worker() :: worker | supervisor.
+    {ok, _Pid} = sc_sup:start_child(value, 60).
 
 -spec init_test() -> {ok, {
        {strategy(), 0, 1},

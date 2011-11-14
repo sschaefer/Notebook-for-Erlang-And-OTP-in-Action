@@ -17,6 +17,7 @@
 %% @doc application callback: invokes sc_sup:start_link/0
 -spec start(atom(), list()) -> tuple(ok, pid())|tuple(error, any()).
 start(_StartType, _StartArgs) ->
+    sc_store:init(),
     case sc_sup:start_link() of
 	{ok, Pid} ->
 	    {ok, Pid};
