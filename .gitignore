@@ -9,4 +9,9 @@ tcp_rpc/doc/*.html
 tcp_rpc/doc/stylesheet.css
 tcp_rpc/doc/edoc-info
 tcp_rpc/doc/erlang.png
+simple_cache/ebin/*.beam
+simple_cache/doc/*.html
+simple_cache/doc/stylesheet.css
+simple_cache/doc/edoc-info
+simple_cache/doc/erlang.png
 erl_crash.dump
