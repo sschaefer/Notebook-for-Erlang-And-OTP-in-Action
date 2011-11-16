@@ -1,0 +1,17 @@
+** this is the overview.doc file for the application 'simple_cache' **
+
+@author Stephen P. Schaefer
+
+@copyright This document: 20011, Stephen P. Schaefer;
+Source code: 2011, Manning Publications
+@version 1.0.0
+@title The Erlang and OTP in Action simple_cache Application
+@doc simple_cache is an extended exercise deisgned to familiarize the Erlang programmer with the OTP system.
+
+==Intended Use==
+
+simple_cache is designed to accelerate retrieval of information which,
+given a "key", takes more time to to generate than to look up and
+which changes infrequently enough to make storing the result as a
+lookup worthwhile.  The cached information is assigned a lifetime.
+The client is responsible for providing the information to be stored.

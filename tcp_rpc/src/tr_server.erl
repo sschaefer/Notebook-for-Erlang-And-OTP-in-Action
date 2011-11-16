@@ -26,16 +26,6 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
 	 terminate/2, code_change/3]).
 
-%% for testing
-% I wish the ifdef worked, but it doesn't
-% -ifdef(TEST).
-% -export([
-% 	 do_rpc/2,
-%	 split_out_mfa/1,
-%	 args_to_terms/1
-%	]).
-% -endif.
-
 -define(SERVER, ?MODULE).
 
 -include("tr_server.hrl").
@@ -78,17 +68,17 @@ stop() ->
     gen_server:cast(?SERVER, stop).
 
 %%%==============================================================================
-%%% genserver callbacks
+%%% gen_server callbacks
 %%%==============================================================================
 
-%% @doc genserver callback: starts listening to a TCP Port,
+%% @doc gen_server callback: starts listening to a TCP Port,
 %%     and returns the initial state.
 -spec init(list(integer())) -> tuple(ok, #state{}).
 init([Port]) ->
     {ok, LSock} = gen_tcp:listen(Port, [{active, true}]),
     {ok, #state{port = Port, lsock = LSock}, 0}.
 
-%% @doc genserver callback: provides a reply to get_count request, for anything else, noop
+%% @doc gen_server callback: provides a reply to get_count request, for anything else, noop
 -spec handle_call(_Request, _From, #state{}) -> tuple(reply, ok, #state{}).
 handle_call(Request, _From, State) ->
     case Request of
@@ -98,7 +88,7 @@ handle_call(Request, _From, State) ->
 	    {reply, ok, State}
     end.
 
-%% @doc genserver callback: provides {stop, normal, State} reply to stop message,
+%% @doc gen_server callback: provides {stop, normal, State} reply to stop message,
 %%     {noreply, State} to others
 -spec handle_cast(_Msg, #state{})  -> tuple(noreply, #state{}).
 handle_cast(Msg, State) ->
@@ -109,7 +99,7 @@ handle_cast(Msg, State) ->
 	    {noreply, State}
     end.
 
-%% @doc genserver callback: accepts a connection to the service TCP socket
+%% @doc gen_server callback: accepts a connection to the service TCP socket
 -spec handle_info(tuple(atom(), socket(), string()) | any(), #state{}) ->
 			 tuple(noreply, #state{}).
 handle_info({tcp, Socket, RawData}, State) ->
@@ -122,12 +112,12 @@ handle_info(timeout, #state{lsock = LSock} = State) ->
 handle_info(_Info, State) ->
     {noreply, State}.
 
-%% @doc genserver callback: minimal implementation returns ok.
+%% @doc gen_server callback: minimal implementation returns ok.
 -spec terminate(_Resason, #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 
-%% @doc genserver callback: minimal implementation returns {ok, State}
+%% @doc gen_server callback: minimal implementation returns {ok, State}
 -spec code_change(_OldVsn, #state{}, _Extra) -> tuple(ok, #state{}).
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
@@ -168,7 +158,7 @@ args_to_terms(RawArgs) ->
     Args.
 
 %%%==============================================================================
-%%% Tests
+%%% Tests: unexported functions must be tested within the module.
 %%%==============================================================================
 
 -ifdef(TEST).
