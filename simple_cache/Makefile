@@ -25,7 +25,7 @@ DOCS=$(SOURCES:src/%.erl=doc/%.html)
 ebin/%.beam : src/%.erl $(HEADERS) Makefile
 	erlc $(ERLC_FLAGS) -o ebin/ $<
 
-doc/%.html : src/%.erl $(HEADERS) Makefile
+doc/%.html : src/%.erl $(HEADERS) doc/overview.edoc Makefile
 	erl -noshell -eval 'edoc:application($(APPLICATION),".", [])' -s init stop
 
 ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))

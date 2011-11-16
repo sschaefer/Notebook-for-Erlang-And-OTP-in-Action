@@ -11,6 +11,12 @@
 
 -export([insert/2, lookup/1, delete/1]).
 
+%%%================================================================
+%%% API
+%%%================================================================
+
+%% @doc Install a key and its value into the cache.
+-spec insert(term(), term()) -> true.
 insert(Key, Value) ->
     case sc_store:lookup(Key) of
 	{ok, Pid} ->
@@ -20,6 +26,8 @@ insert(Key, Value) ->
 	    sc_store:insert(Key, Pid)
     end.
 
+%% @doc Look up a value given its key.
+-spec lookup(term()) -> {ok, term()}.
 lookup(Key) ->
     try
 	{ok, Pid} = sc_store:lookup(Key),
@@ -30,6 +38,8 @@ lookup(Key) ->
 	    {error, not_found}
     end.
 
+%% @doc delete a key and its value from the cache.
+-spec delete(term()) -> ok.
 delete(Key) ->
     case sc_store:lookup(Key) of
 	{ok, Pid} ->
