@@ -7,9 +7,9 @@
 %%%
 %%% @end
 %%%------------------------------------------------------------------------------
--module(sc_sup_test).
+-module(sc_sup_tests).
 
--include("eunit-2.1.7/include/eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").
 -include("sc_sup.hrl").
 
 -export([]).

@@ -5,7 +5,7 @@
 %%% @end
 %%% Created : 10 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(sc_element_test).
+-module(sc_element_tests).
 
 -include("sc_element.hrl").
 

@@ -13,7 +13,7 @@ ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))
 SOURCES=$(wildcard src/*.erl)
 else
 # -DNOTEST did occur in ERLC_FLAGS, so exclude test code
-test_sources=$(wildcard src/*_test.erl)
+test_sources=$(wildcard src/*_tests.erl)
 all_sources=$(wildcard src/*.erl)
 SOURCES=$(filter-out $(test_sources),$(all_sources))
 endif

@@ -5,9 +5,9 @@
 %%% @end
 %%% Created :  6 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(sc_app_test).
+-module(sc_app_tests).
 
--include("eunit-2.1.7/include/eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -export([]).
 

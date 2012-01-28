@@ -1,1 +1,1 @@
--include("eunit-2.1.7/include/eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").

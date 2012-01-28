@@ -5,7 +5,7 @@
 %%% @end
 %%% Created : 12 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(sc_store_test).
+-module(sc_store_tests).
 
 -include("sc_store.hrl").
 
