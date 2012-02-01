@@ -11,10 +11,9 @@
 
 -export([]).
 
--spec start_test() -> {ok, pid()}.
 start_test() ->
-    {ok, _Pid} = sc_app:start(ignored, ignored),
-   '$end_of_table' = ets:first(sc_store).
+    ?assertEqual(sc_app:start(ignored, ignored), {ok, whereis(sc_sup)}),
+    ?assertEqual('$end_of_table', ets:first(sc_store)).
 
 -spec stop_test() -> ok.
 stop_test() ->

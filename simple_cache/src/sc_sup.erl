@@ -1,57 +1,84 @@
-%%% @author Logan, Merritt and Carlsson
-%%% @copyright (C) 2011, Manning Publications
+%%%-------------------------------------------------------------------
+%%% @author  Logan, Merritt, and Carlsson
+%%% @copyright (C) 2012, 
 %%% @doc
-%%% Supervisor behavior for simple_cache of Erlang and OTP in Action
+%%% - transcribed and modified (heavily) by Stephen P. Schaefer
 %%% @end
-%%% Created : 10 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
-
+%%% Created : 28 Jan 2012 by  <sps@thyrsus-laptop2>
+%%%-------------------------------------------------------------------
 -module(sc_sup).
 
--behavior(supervisor).
+-behaviour(supervisor).
 
--include("sc_sup.hrl").
+-include("sup.hrl").
 
--export([start_link/0,
-	 start_child/2
-	]).
+%% API
+-export([start_link/0]).
 
+%% Supervisor callbacks
 -export([init/1]).
 
 -define(SERVER, ?MODULE).
 
-%%%================================================================
-%%% API
-%%%================================================================
+%%%===================================================================
+%%% API functions
+%%%===================================================================
 
-%% @doc supervisor API implementation: invokes supervisor:start_link/3
+%%--------------------------------------------------------------------
+%% @doc
+%% Starts the supervisor
+%%
+%% @end
+%%--------------------------------------------------------------------
 -spec start_link() -> startlink_ret().
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
-%% @doc supervisor API implementation: invokes supervisor:start_child/2
--spec start_child(term(), integer()) -> startchild_ret().
-start_child(Value, LeaseTime) ->
-    supervisor:start_child(?SERVER, [Value, LeaseTime]).
+%%%===================================================================
+%%% Supervisor callbacks
+%%%===================================================================
 
-%%%================================================================
-%%% Callbacks
-%%%================================================================
-
-%% @doc supervisor callback: return description of desired supervisor behavior
--spec init([]) -> {ok, {
-       {strategy(), 0, 1},
-       [{sc_element,
-	 {sc_element,start_link, []},
-	 restart(),
-	 shutdown(),
-	 worker(),
-	 [sc_element]
-	}]
-      }}.
+%%--------------------------------------------------------------------
+%% @private
+%% @doc
+%% Whenever a supervisor is started using supervisor:start_link/[2,3],
+%% this function is called by the new process to find out about
+%% restart strategy, maximum restart frequency and child
+%% specifications.
+%%
+%% @spec init(Args) -> {ok, {SupFlags, [ChildSpec]}} |
+%%                     ignore |
+%%                     {error, Reason}
+%% @end
+%%--------------------------------------------------------------------
+-spec init([]) -> {ok, {sup_flags(), [child_spec()]}}.
 init([]) ->
-    Element = {sc_element, {sc_element, start_link, []},
-	       temporary, brutal_kill, worker, [sc_element]},
-    Children = [Element],
-    RestartStrategy = {simple_one_for_one, 0, 1},
-    {ok, {RestartStrategy, Children}}.
+    Sup_name = sc_element_sup,
+    Sup_module = sc_element_sup,
+    Sup_callback_module = [sc_element_sup],
+    Sup_restart = permanent,
+    Sup_shutdown = 2000,
+    Sup_type = supervisor,
+    ElementSup = {Sup_name, {Sup_module, start_link, []},
+		  Sup_restart, Sup_shutdown, Sup_type, Sup_callback_module},
+    Mgr_name = sc_event,
+    Mgr_module = sc_event,
+    Mgr_callback_module = dynamic,
+    Mgr_restart = permanent,
+    Mgr_shutdown = 2000,
+    Mgr_type = worker,
+    ElementManager = {Mgr_name, {Mgr_module, start_link, []},
+		      Mgr_restart, Mgr_shutdown, Mgr_type, Mgr_callback_module},
+    Children = [ElementSup, ElementManager],
 
+    RestartStrategy = one_for_one,
+    MaxRestarts = 4,
+    MaxSecondsBetweenRestarts = 3600,
+
+    SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
+
+    {ok, {SupFlags, Children}}.
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================

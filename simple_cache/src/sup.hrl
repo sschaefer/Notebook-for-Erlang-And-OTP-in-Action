@@ -24,3 +24,12 @@
                 | {error, startlink_err()}.
 
 -type startlink_err() :: {already_started, pid()} | shutdown | term().
+
+-type sup_flags() :: {strategy(), integer(), integer()}.
+
+-type child_spec() :: { Name :: atom(),
+			{ Module :: atom(), Function :: atom(), list() },
+			restart(),
+			shutdown(),
+			worker(),
+			list( atom() ) }.

@@ -1,49 +1,22 @@
-%%%------------------------------------------------------------------------------
-%%% @author Stephen P. Schaefer <sschaefer@acm.org>
-%%%  [http://followingthesystemtutorial.blogspot.com]
-%%% @copyright Stephen P. Schaefer
-%%% @doc Eunit tests for sc_sup module provided in
-%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
-%%%
+%%% @author  <sps@thyrsus-laptop2>
+%%% @copyright (C) 2012, 
+%%% @doc
+%%% tests for Erlang and OTP in Action Chapter 7 sc_sup.
 %%% @end
-%%%------------------------------------------------------------------------------
+%%% Created : 28 Jan 2012 by  <sps@thyrsus-laptop2>
+
 -module(sc_sup_tests).
 
 -include_lib("eunit/include/eunit.hrl").
--include("sc_sup.hrl").
-
--export([]).
+-include("sup.hrl").
 
 -spec start_link_test() -> {ok, pid()}.
 start_link_test() ->
-    {ok,_Pid} = sc_sup:start_link().
+    {ok, _Pid} = sc_sup:start_link().
 
--spec start_child_test() -> startchild_ret().
-start_child_test() ->
-    {ok, _Pid} = sc_sup:start_child(value, 60).
-
--spec init_test() -> {ok, {
-       {strategy(), 0, 1},
-       [{sc_element,
-	 {sc_element,start_link, []},
-	 restart(),
-	 shutdown(),
-	 worker(),
-	 [sc_element]
-	}]
-      }}.
 init_test() ->
-    {ok, {
-       {simple_one_for_one, 0, 1},
-       [{sc_element,
-	 {sc_element,start_link, []},
-	 temporary,
-	 brutal_kill,
-	 worker,
-	 [sc_element]
-	}]
-      }} = sc_sup:init([]).
-
-
-
-
+    ?assertEqual({ok, {
+       {one_for_one, 4, 3600},
+       [ {sc_element_sup, {sc_element_sup, start_link, []}, permanent, 2000, supervisor, [sc_element_sup]},
+	 {sc_event, {sc_event, start_link, []}, permanent, 2000, worker, dynamic}] }},
+		  sc_sup:init([])).

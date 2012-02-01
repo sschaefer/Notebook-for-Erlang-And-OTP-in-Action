@@ -18,7 +18,7 @@ start_link_test() ->
     {ok, _Pid} = sc_element:start_link(value1, 60).
 
 create2_test() ->
-    sc_sup:start_link(), % elements invoke supervisor resources
+    sc_element_sup:start_link(), % elements invoke supervisor resources
     {ok, _Pid} = sc_element:create(value2, 60).
 
 create1_test() ->
