@@ -1,63 +1,41 @@
 %%%-------------------------------------------------------------------
-%%% @author  Logan, Merritt, and Carlsson
+%%% @author  <sps@thyrsus-laptop2>
 %%% @copyright (C) 2012, 
 %%% @doc
-%%% - transcribed and modified by Stephen P. Schaefer
+%%% Capture event sent to error logger
 %%% @end
-%%% Created : 31 Jan 2012 by  <sps@thyrsus-laptop2>
+%%% Created :  1 Feb 2012 by  <sps@thyrsus-laptop2>
 %%%-------------------------------------------------------------------
--module(sc_event_logger).
+-module(test_error_logging).
 
 -behaviour(gen_event).
 
 %% API
-%-export([start_link/0, add_handler/0, delete_handler/0]).
--export([add_handler/0, delete_handler/0]).
+-export([register_with_logger/0,retrieve_info_msg/0]).
 
 %% gen_event callbacks
-%-export([init/1, handle_event/2, handle_call/2, 
-%	 handle_info/2, terminate/2, code_change/3]).
 -export([init/1, handle_event/2, handle_call/2, 
 	 handle_info/2, terminate/2, code_change/3]).
 
 -define(SERVER, ?MODULE). 
 
--include("sc_event_logger.hrl").
+-record(state, {pid, first_arg, second_arg}).
+
 
 %%%===================================================================
-%%% gen_event callbacks
+%%% API
 %%%===================================================================
-
 %%--------------------------------------------------------------------
 %% @doc
-%% Creates an event manager
-%%
+%% Tell error_logger to start sending us events
+%% @spec
 %% @end
 %%--------------------------------------------------------------------
-%-spec start_link() -> {ok, pid()} | {error, term()}.
-%start_link() ->
-%    gen_event:start_link({local, ?SERVER}).
+register_with_logger() ->
+    error_logger:add_report_handler(?MODULE).
 
-%%--------------------------------------------------------------------
-%% @doc
-%% Adds an event handler
-%%
-%% @end
-%%--------------------------------------------------------------------
--spec add_handler() -> ok | {'EXIT', Reason::term()} | term().
-add_handler() ->
-    sc_event:add_handler(?MODULE, []).
-
-%%--------------------------------------------------------------------
-%% @doc
-%% Deletes an event handler
-%% 
-%% @end
-%%--------------------------------------------------------------------
--spec delete_handler() -> ok.
-delete_handler() ->
-    sc_event:delete_handler(?MODULE, []).
-
+retrieve_info_msg() ->
+    gen_event:call(error_logger, ?MODULE, retrieve_info_msg).
 %%%===================================================================
 %%% gen_event callbacks
 %%%===================================================================
@@ -87,17 +65,9 @@ init([]) ->
 %%                          remove_handler
 %% @end
 %%--------------------------------------------------------------------
-handle_event({create, {Key, Value}}, State) ->
-    error_logger:info_msg("create(~w, ~w)~n", [Key, Value]),
-    {ok, State};
-handle_event({lookup, Key}, State) ->
-    error_logger:info_msg("lookup(~w)~n", [Key]),
-    {ok, State};
-handle_event({delete, Key}, State) ->
-    error_logger:info_msg("delete(~w)~n", [Key]),
-    {ok, State};
-handle_event({replace, {Key, Value}}, State) ->
-    error_logger:info_msg("replace(~w, ~w)~n", [Key, Value]),
+handle_event({info_msg, _Gleader, {Pid, Format, Data}}, _State) ->
+    {ok, #state{pid=Pid, first_arg=Format, second_arg=Data}};
+handle_event(_Event, State) ->
     {ok, State}.
 
 %%--------------------------------------------------------------------
@@ -113,6 +83,9 @@ handle_event({replace, {Key, Value}}, State) ->
 %%                   {remove_handler, Reply}
 %% @end
 %%--------------------------------------------------------------------
+handle_call(retrieve_info_msg, State) ->
+    #state{pid=_Pid, first_arg=Format, second_arg=Data} = State,
+    {ok, {Format, Data}, State};
 handle_call(_Request, State) ->
     Reply = ok,
     {ok, Reply, State}.
