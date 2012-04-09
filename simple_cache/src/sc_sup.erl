@@ -26,7 +26,7 @@
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Starts the supervisor
+%% API: Starts the supervisor
 %%
 %% @end
 %%--------------------------------------------------------------------
@@ -39,16 +39,12 @@ start_link() ->
 %%%===================================================================
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Whenever a supervisor is started using supervisor:start_link/[2,3],
+%% supervisor callback: Whenever a supervisor is started using supervisor:start_link/[2,3],
 %% this function is called by the new process to find out about
 %% restart strategy, maximum restart frequency and child
 %% specifications.
 %%
-%% @spec init(Args) -> {ok, {SupFlags, [ChildSpec]}} |
-%%                     ignore |
-%%                     {error, Reason}
 %% @end
 %%--------------------------------------------------------------------
 -spec init([]) -> {ok, {sup_flags(), [child_spec()]}}.

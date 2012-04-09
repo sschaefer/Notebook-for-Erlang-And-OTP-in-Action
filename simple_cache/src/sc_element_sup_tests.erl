@@ -3,7 +3,7 @@
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
 %%% @doc Eunit tests for sc_element_sup module provided in
-%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
+%%%      the "Erlang and OTP in Action" book by Logan, Merritt and Carlsson.
 %%%
 %%% @end
 %%%------------------------------------------------------------------------------

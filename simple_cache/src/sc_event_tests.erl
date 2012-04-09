@@ -2,17 +2,11 @@
 %%% @author  <sps@thyrsus-laptop2>
 %%% @copyright (C) 2012, 
 %%% @doc
-%%%
+%%% The add_handler routine under test must refer to a module implementing
+%%% the gen_event behavior, so this test module must provide that.
 %%% @end
 %%% Created : 28 Jan 2012 by  <sps@thyrsus-laptop2>
 %%%-------------------------------------------------------------------
-
-%%%%%%%%%%
-%%%%%%%%%%
-%%%%%%%%%% The add_handler routine under test must refer to a module implementing
-%%%%%%%%%% the gen_event behavior, so this test module must provide that
-%%%%%%%%%%
-%%%%%%%%%%
 
 -module(sc_event_tests).
 
@@ -32,26 +26,26 @@
 -record(state, {last_event}).
 
 %%%===================================================================
-%%% gen_event callbacks
+%%% API
 %%%===================================================================
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Creates an event manager
+%% API: Creates an event manager
 %%
-%% @spec start_link() -> {ok, Pid} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
+-spec start_link() -> {ok, Pid} | {error, Error}.
 start_link() ->
     gen_event:start_link({local, ?SERVER}).
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Adds an event handler
+%% API: Adds an event handler
 %%
-%% @spec add_handler() -> ok | {'EXIT', Reason} | term()
 %% @end
 %%--------------------------------------------------------------------
+-spec add_handler() -> ok | {'EXIT', Reason :: term } | term().
 add_handler() ->
     gen_event:add_handler(?SERVER, ?MODULE, []).
 
@@ -60,21 +54,19 @@ add_handler() ->
 %%%===================================================================
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Whenever a new event handler is added to an event manager,
+%% gen_event callback: Whenever a new event handler is added to an event manager,
 %% this function is called to initialize the event handler.
 %%
-%% @spec init(Args) -> {ok, State}
 %% @end
 %%--------------------------------------------------------------------
+-spec init([handler_args]) -> {ok, #state{}}.
 init([handler_args]) ->
     {ok, #state{}}.
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Whenever an event manager receives an event sent using
+%% gen_event callback: Whenever an event manager receives an event sent using
 %% gen_event:notify/2 or gen_event:sync_notify/2, this function is
 %% called for each installed event handler to handle the event.
 %%
@@ -84,63 +76,56 @@ init([handler_args]) ->
 %%                          remove_handler
 %% @end
 %%--------------------------------------------------------------------
+-spec handle_event(Event :: term(), State :: #state{}) -> {ok, #state{}}.
 handle_event(Event, _State) ->
     {ok, #state{last_event = Event}}.
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Whenever an event manager receives a request sent using
+%% gen_event callback: Whenever an event manager receives a request sent using
 %% gen_event:call/3,4, this function is called for the specified
 %% event handler to handle the request.
 %%
-%% @spec handle_call(Request, State) ->
-%%                   {ok, Reply, State} |
-%%                   {swap_handler, Reply, Args1, State1, Mod2, Args2} |
-%%                   {remove_handler, Reply}
 %% @end
 %%--------------------------------------------------------------------
+-spec handle_call(Request :: term(), State :: #state{}) -> {ok, ok, State}.
 handle_call(_Request, State) ->
     Reply = {ok, State},
     {ok, Reply, State}.
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% This function is called for each installed event handler when
+%% gen_event callback: This function is called for each installed event handler when
 %% an event manager receives any other message than an event or a
 %% synchronous request (or a system message).
 %%
-%% @spec handle_info(Info, State) ->
-%%                         {ok, State} |
-%%                         {swap_handler, Args1, State1, Mod2, Args2} |
-%%                         remove_handler
 %% @end
 %%--------------------------------------------------------------------
+-spec handle_info(Info :: term(), State :: #state{}) -> {ok, State}.
 handle_info(_Info, State) ->
     {ok, State}.
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Whenever an event handler is deleted from an event manager, this
+%% gen_event callback: Whenever an event handler is deleted from an event manager, this
 %% function is called. It should be the opposite of Module:init/1 and
 %% do any necessary cleaning up.
 %%
 %% @spec terminate(Reason, State) -> void()
 %% @end
 %%--------------------------------------------------------------------
+-spec terminate(Reason :: term(), State :: #state{}) -> void().
 terminate(_Reason, _State) ->
     ok.
 
 %%--------------------------------------------------------------------
-%% @private
 %% @doc
-%% Convert process state when code is changed
+%% gen_event callback: Convert process state when code is changed
 %%
 %% @spec code_change(OldVsn, State, Extra) -> {ok, NewState}
 %% @end
 %%--------------------------------------------------------------------
+-spec code_change(OldVsn :: term(), State :: #state{}, Extra :: term()) -> {ok, State}.
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 

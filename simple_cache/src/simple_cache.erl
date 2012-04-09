@@ -16,7 +16,7 @@
 %%% API
 %%%================================================================
 
-%% @doc Install a key and its value into the cache.
+%% @doc API: Install a key and its value into the cache.
 -spec insert(term(), term()) -> true.
 insert(Key, Value) ->
     case sc_store:lookup(Key) of
@@ -29,8 +29,8 @@ insert(Key, Value) ->
 	    sc_store:insert(Key, Pid)
     end.
 
-%% @doc Look up a value given its key.
--spec lookup(term()) -> {ok, term()}.
+%% @doc API: Look up a value given its key.
+-spec lookup(term()) -> {ok, term()} | {error, notfound}.
 lookup(Key) ->
     sc_event:lookup(Key),
     try
@@ -42,7 +42,7 @@ lookup(Key) ->
 	    {error, not_found}
     end.
 
-%% @doc delete a key and its value from the cache.
+%% @doc API: delete a key and its value from the cache.
 -spec delete(term()) -> ok.
 delete(Key) ->
     sc_event:delete(Key),
