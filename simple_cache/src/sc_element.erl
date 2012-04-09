@@ -46,7 +46,7 @@ start_link(Value, LeaseTime) ->
 %% the process.
 -spec create(term(), time_period()) -> startchild_ret().
 create(Value, LeaseTime) ->
-    sc_sup:start_child(Value, LeaseTime).
+    sc_element_sup:start_child(Value, LeaseTime).
 
 %% @doc API: What a non-supervisor calls to start the process with
 %% the default lifetime.

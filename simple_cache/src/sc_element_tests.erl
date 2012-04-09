@@ -5,7 +5,7 @@
 %%% @end
 %%% Created : 10 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(sc_element_test).
+-module(sc_element_tests).
 
 -include("sc_element.hrl").
 
@@ -18,7 +18,7 @@ start_link_test() ->
     {ok, _Pid} = sc_element:start_link(value1, 60).
 
 create2_test() ->
-    sc_sup:start_link(), % elements invoke supervisor resources
+    sc_element_sup:start_link(), % elements invoke supervisor resources
     {ok, _Pid} = sc_element:create(value2, 60).
 
 create1_test() ->

@@ -5,16 +5,15 @@
 %%% @end
 %%% Created :  6 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(sc_app_test).
+-module(sc_app_tests).
 
--include("eunit-2.1.7/include/eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -export([]).
 
--spec start_test() -> {ok, pid()}.
 start_test() ->
-    {ok, _Pid} = sc_app:start(ignored, ignored),
-   '$end_of_table' = ets:first(sc_store).
+    ?assertEqual(sc_app:start(ignored, ignored), {ok, whereis(sc_sup)}),
+    ?assertEqual('$end_of_table', ets:first(sc_store)).
 
 -spec stop_test() -> ok.
 stop_test() ->

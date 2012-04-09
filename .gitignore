@@ -14,4 +14,10 @@ simple_cache/doc/*.html
 simple_cache/doc/stylesheet.css
 simple_cache/doc/edoc-info
 simple_cache/doc/erlang.png
+die_please/ebin/*
+die_please/doc/*.html
+die_please/doc/stylesheet.css
+die_please/doc/edoc-info
+die_please/doc/erlang.png
+ExploreEUnit/ebin/*
 erl_crash.dump

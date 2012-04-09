@@ -2,6 +2,7 @@
 %%% @copyright (C) 2011, Manning Publications
 %%% @doc
 %%% Public API to simple_cache application
+%%% - transcribed and modified by Stephen P. Schaefer
 %%% @end
 %%% Created : 12 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
@@ -15,20 +16,23 @@
 %%% API
 %%%================================================================
 
-%% @doc Install a key and its value into the cache.
+%% @doc API: Install a key and its value into the cache.
 -spec insert(term(), term()) -> true.
 insert(Key, Value) ->
     case sc_store:lookup(Key) of
 	{ok, Pid} ->
+	    sc_event:replace(Key, Value),
 	    sc_element:replace(Pid, Value);
 	{error, _} ->
+	    sc_event:create(Key, Value),
 	    {ok, Pid} = sc_element:create(Value),
 	    sc_store:insert(Key, Pid)
     end.
 
-%% @doc Look up a value given its key.
--spec lookup(term()) -> {ok, term()}.
+%% @doc API: Look up a value given its key.
+-spec lookup(term()) -> {ok, term()} | {error, notfound}.
 lookup(Key) ->
+    sc_event:lookup(Key),
     try
 	{ok, Pid} = sc_store:lookup(Key),
 	{ok, Value} = sc_element:fetch(Pid),
@@ -38,9 +42,10 @@ lookup(Key) ->
 	    {error, not_found}
     end.
 
-%% @doc delete a key and its value from the cache.
+%% @doc API: delete a key and its value from the cache.
 -spec delete(term()) -> ok.
 delete(Key) ->
+    sc_event:delete(Key),
     case sc_store:lookup(Key) of
 	{ok, Pid} ->
 	    sc_element:delete(Pid);
