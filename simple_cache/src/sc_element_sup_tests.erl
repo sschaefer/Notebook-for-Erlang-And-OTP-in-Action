@@ -2,25 +2,23 @@
 %%% @author Stephen P. Schaefer <sschaefer@acm.org>
 %%%  [http://followingthesystemtutorial.blogspot.com]
 %%% @copyright Stephen P. Schaefer
-%%% @doc Eunit tests for sc_sup module provided in
-%%%      the "OTP in Action" book by Logan, Merritt and Carlsson.
+%%% @doc Eunit tests for sc_element_sup module provided in
+%%%      the "Erlang and OTP in Action" book by Logan, Merritt and Carlsson.
 %%%
 %%% @end
 %%%------------------------------------------------------------------------------
--module(sc_sup_test).
+-module(sc_element_sup_tests).
 
--include("eunit-2.1.7/include/eunit.hrl").
--include("sc_sup.hrl").
-
--export([]).
+-include_lib("eunit/include/eunit.hrl").
+-include("sup.hrl").
 
 -spec start_link_test() -> {ok, pid()}.
 start_link_test() ->
-    {ok,_Pid} = sc_sup:start_link().
+    {ok,_Pid} = sc_element_sup:start_link().
 
 -spec start_child_test() -> startchild_ret().
 start_child_test() ->
-    {ok, _Pid} = sc_sup:start_child(value, 60).
+    {ok, _Pid} = sc_element_sup:start_child(value, 60).
 
 -spec init_test() -> {ok, {
        {strategy(), 0, 1},
@@ -42,7 +40,7 @@ init_test() ->
 	 worker,
 	 [sc_element]
 	}]
-      }} = sc_sup:init([]).
+      }} = sc_element_sup:init([]).
 
 
 

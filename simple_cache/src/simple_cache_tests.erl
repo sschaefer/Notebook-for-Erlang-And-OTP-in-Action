@@ -5,7 +5,7 @@
 %%% @end
 %%% Created : 12 Nov 2011 by Stephen P. Schaefer <sps@thyrsus-laptop2>
 
--module(simple_cache_test).
+-module(simple_cache_tests).
 
 -include("simple_cache.hrl").
 

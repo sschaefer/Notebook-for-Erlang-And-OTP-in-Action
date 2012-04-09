@@ -1,6 +1,6 @@
 # An erlang Makefile
 
-APPLICATION=simple_cache
+APPLICATION=fibonacci
 
 empty:=
 space:=$(empty) $(empty)
@@ -26,7 +26,7 @@ ebin/%.beam : src/%.erl $(HEADERS) Makefile
 	erlc $(ERLC_FLAGS) -o ebin/ $<
 
 doc/%.html : src/%.erl $(HEADERS) doc/overview.edoc Makefile
-	erl -noshell -eval 'edoc:application($(APPLICATION),".", [])' -s init stop
+	erl -noshell -eval 'edoc:application($(APPLICATION),".", [{private, true}])' -s init stop
 
 ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))
 # -DNOTEST did not occur in ERLC_FLAGS: test
@@ -47,10 +47,6 @@ release: clean
 	$(MAKE) ERLC_FLAGS="$(ERLC_FLAGS) -DNOTEST"
 
 doc: $(DOCS)
-
-run:
-	erl -noshell -pa ebin \
-		-eval 'application:start($(APPLICATION))' &
 
 webtool:
 	erl -noshell -pa ebin \

@@ -1,0 +1,10 @@
+* Erlang
+** Move EUnit test of private functions from external file to source file
+** Expand function documentation,  based on tests:
+*** minimal_server
+*** tr_server
+** Chapter 3 - tr_server
+** Chapter 4 - tr_app
+** Chapter 6 - simple_cache
+** Chapter 7 - logging, events
+** Chapter 8 - 

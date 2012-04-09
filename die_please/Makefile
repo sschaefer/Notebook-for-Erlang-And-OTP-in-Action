@@ -1,6 +1,6 @@
 # An erlang Makefile
 
-APPLICATION=simple_cache
+APPLICATION=die_please
 
 empty:=
 space:=$(empty) $(empty)
@@ -13,7 +13,7 @@ ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))
 SOURCES=$(wildcard src/*.erl)
 else
 # -DNOTEST did occur in ERLC_FLAGS, so exclude test code
-test_sources=$(wildcard src/*_tests.erl)
+test_sources=$(wildcard src/*_test.erl)
 all_sources=$(wildcard src/*.erl)
 SOURCES=$(filter-out $(test_sources),$(all_sources))
 endif
@@ -26,7 +26,7 @@ ebin/%.beam : src/%.erl $(HEADERS) Makefile
 	erlc $(ERLC_FLAGS) -o ebin/ $<
 
 doc/%.html : src/%.erl $(HEADERS) doc/overview.edoc Makefile
-	erl -noshell -eval 'edoc:application($(APPLICATION),".", [])' -s init stop
+	erl -noshell -eval 'edoc:application($(APPLICATION),".", [{private, true}])' -s init stop
 
 ifeq ($(ERLC_FLAGS),$(subst $(dnotest),$(empty),$(ERLC_FLAGS)))
 # -DNOTEST did not occur in ERLC_FLAGS: test
@@ -48,9 +48,19 @@ release: clean
 
 doc: $(DOCS)
 
-run:
+die_please:
 	erl -noshell -pa ebin \
-		-eval 'application:start($(APPLICATION))' &
+		-eval 'application:start(sasl)' \
+		-eval 'die_please:start_link()' \
+		-eval 'timer:sleep(5000)' \
+		-s init stop
+
+die_please2:
+	erl -noshell -pa ebin \
+		-eval 'application:start(sasl)' \
+		-eval 'proc_lib:spawn(fun die_please2:go/0)' \
+		-eval 'timer:sleep(5000)' \
+		-s init stop
 
 webtool:
 	erl -noshell -pa ebin \

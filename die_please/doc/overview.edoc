@@ -1,0 +1,13 @@
+** this is the overview.doc file for the domonstrations die_please and die_please2 '' **
+
+@author Stephen P. Schaefer
+
+@copyright This document: 20011, Stephen P. Schaefer;
+Source code: 2011, Manning Publications
+@version 1.0.0
+@title The Erlang and OTP in Action logging demonstrations
+@doc brief modules to demonstrate the use of logging
+
+==Intended Use==
+
+Read the source code and the Makefile targets "die_please: " and "die_please2: ".  Run via make.
