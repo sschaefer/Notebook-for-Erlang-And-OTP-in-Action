@@ -79,7 +79,7 @@ init([Port]) ->
     {ok, #state{port = Port, lsock = LSock}, 0}.
 
 %% @doc gen_server callback: provides a reply to get_count request, for anything else, noop
--spec handle_call(_Request, _From, #state{}) -> tuple(reply, ok, #state{}).
+-spec handle_call(_Request, _From, #state{}) -> {reply, ok, #state{}}.
 handle_call(Request, _From, State) ->
     case Request of
 	get_count ->
