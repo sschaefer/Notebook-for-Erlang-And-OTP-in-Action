@@ -1,0 +1,17 @@
+** this is the overview.doc file for the application 'simple_cache' **
+
+@author Stephen P. Schaefer
+
+@copyright This document: 20012, Stephen P. Schaefer;
+Source code: 2011, Manning Publications
+@version 1.0.0
+@title The Erlang and OTP in Action resource_discovery_cache Application
+@doc resource_discovery is an exercise deisgned to introduced distributed applications.
+
+==Intended Use==
+
+resource_discovery is designed to receive "I have", "I want", and
+"Trade knowledge" messages to maintain a list of available "resources"
+which can be queried by a "fetch resources" messages.  See
+system_tests/0 function in resource_discovery_tests.erl for a
+demonstration of some subtleties.
