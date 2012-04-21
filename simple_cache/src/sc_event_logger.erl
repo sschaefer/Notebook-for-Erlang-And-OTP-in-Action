@@ -84,8 +84,8 @@ init([]) ->
 -spec handle_event({create, {Key :: term(), Value :: term()}} |
 		   {lookup, Key :: term()} |
 		   {delete, Key :: term()} |
-		   {replace, {Key :: term(), Value :: term()}}, State :: #state{}) ->
-			  {ok, State}.
+		   {replace, {Key :: term(), Value :: term()}}, #state{}) ->
+			  {ok, #state{}}.
 handle_event({create, {Key, Value}}, State) ->
     error_logger:info_msg("create(~w, ~w)~n", [Key, Value]),
     {ok, State};
@@ -107,7 +107,7 @@ handle_event({replace, {Key, Value}}, State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec handle_call(Request :: term(), State :: #state{}) -> {ok, ok, State}.
+-spec handle_call(Request :: term(), #state{}) -> {ok, ok, #state{}}.
 handle_call(_Request, State) ->
     Reply = ok,
     {ok, Reply, State}.
@@ -121,7 +121,7 @@ handle_call(_Request, State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec handle_info(Info :: term(), State :: #state{}) -> {ok, State}.
+-spec handle_info(Info :: term(), #state{}) -> {ok, #state{}}.
 handle_info(_Info, State) ->
     {ok, State}.
 
@@ -133,7 +133,7 @@ handle_info(_Info, State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec terminate(Reason :: term(), State :: #state{}) -> void().
+-spec terminate(Reason :: term(), #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 
@@ -143,7 +143,7 @@ terminate(_Reason, _State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec code_change(OldVsn :: term(), State :: #state{}, Extra :: term()) -> {ok, State}.
+-spec code_change(OldVsn :: term(), #state{}, Extra :: term()) -> {ok, #state{}}.
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 

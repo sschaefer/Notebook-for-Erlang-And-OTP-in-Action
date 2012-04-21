@@ -2,7 +2,7 @@
 -record(state, {port, lsock, request_count = 0}).
 -type socket() :: _.
 
--include("eunit-2.1.7/include/eunit.hrl").
+-include_lib("eunit/include/eunit.hrl").
 
 -ifdef(TEST).
 %% do_rpc_client is a helper function for the testing.

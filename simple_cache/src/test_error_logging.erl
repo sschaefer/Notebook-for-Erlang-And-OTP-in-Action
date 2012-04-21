@@ -107,7 +107,7 @@ handle_info(_Info, State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec terminate(Reason :: term(), #state{}) -> void().
+-spec terminate(Reason :: term(), #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 

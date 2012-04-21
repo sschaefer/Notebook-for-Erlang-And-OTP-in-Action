@@ -35,7 +35,7 @@
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec start_link() -> {ok, Pid} | {error, Error}.
+-spec start_link() -> {ok, pid()} | {error, {already_started,pid()}}.
 start_link() ->
     gen_event:start_link({local, ?SERVER}).
 
@@ -88,7 +88,7 @@ handle_event(Event, _State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec handle_call(Request :: term(), State :: #state{}) -> {ok, ok, State}.
+-spec handle_call(Request :: term(), #state{}) -> {ok, ok, #state{}}.
 handle_call(_Request, State) ->
     Reply = {ok, State},
     {ok, Reply, State}.
@@ -101,7 +101,7 @@ handle_call(_Request, State) ->
 %%
 %% @end
 %%--------------------------------------------------------------------
--spec handle_info(Info :: term(), State :: #state{}) -> {ok, State}.
+-spec handle_info(Info :: term(), #state{}) -> {ok, #state{}}.
 handle_info(_Info, State) ->
     {ok, State}.
 
@@ -111,10 +111,9 @@ handle_info(_Info, State) ->
 %% function is called. It should be the opposite of Module:init/1 and
 %% do any necessary cleaning up.
 %%
-%% @spec terminate(Reason, State) -> void()
 %% @end
 %%--------------------------------------------------------------------
--spec terminate(Reason :: term(), State :: #state{}) -> void().
+-spec terminate(Reason :: term(), #state{}) -> ok.
 terminate(_Reason, _State) ->
     ok.
 
@@ -122,10 +121,9 @@ terminate(_Reason, _State) ->
 %% @doc
 %% gen_event callback: Convert process state when code is changed
 %%
-%% @spec code_change(OldVsn, State, Extra) -> {ok, NewState}
 %% @end
 %%--------------------------------------------------------------------
--spec code_change(OldVsn :: term(), State :: #state{}, Extra :: term()) -> {ok, State}.
+-spec code_change(OldVsn :: term(), #state{}, Extra :: term()) -> {ok, #state{}}.
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 

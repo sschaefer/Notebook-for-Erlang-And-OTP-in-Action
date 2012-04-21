@@ -7,4 +7,35 @@
 ** Chapter 4 - tr_app
 ** Chapter 6 - simple_cache
 ** Chapter 7 - logging, events
+*** Get tests to pass after Make clean
+*** publish to github
 ** Chapter 8 - 
+*** Get tests to pass after Make clean
+*** publish to github
+** Chapter 9 - mnesia
+*** Section 9.2.3
+**** create_tables
+*** Section 9.2.4
+**** insert_user
+**** insert_project
+*** Section 9.3.1
+**** sc_store:init/0
+**** sc_store:insert/2
+**** sc_store:lookup/1
+**** sc_store:delete/1
+*** Section 9.3.2
+**** Makefile
+**** sc_app:start/2
+**** sc_app:ensure_contact/0
+**** sc_app:wait_for_nodes/2
+**** sc_app:wait_for_nodes/3
+**** sc_app:get_env/3
+*** Section 9.3.3
+**** simple_cache.app
+**** sc_app:start/2
+*** Section 9.3.4
+**** sc_store:init/0
+**** sc_store:dynamic_db_init/1
+**** sc_store:add_extra_nodes/1
+**** Makefile: startup
+**** Makefile: testing
