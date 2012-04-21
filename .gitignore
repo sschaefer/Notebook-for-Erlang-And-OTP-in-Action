@@ -21,3 +21,4 @@ die_please/doc/edoc-info
 die_please/doc/erlang.png
 ExploreEUnit/ebin/*
 erl_crash.dump
+resource_discovery/ebin/*.beam
